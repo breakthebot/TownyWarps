@@ -33,6 +33,7 @@ public class config {
     public config(TownyWarp plugin) {
         this.plugin = plugin;
         this.cfg = plugin.getConfig();
+        plugin.saveDefaultConfig();
         this.maxWarps = cfg.getInt("maxWarps", 5);
         this.firstWarpCost = cfg.getDouble("firstWarpCost", 3);
         this.priceMultiplier = cfg.getDouble("warpPriceMultiplier", 2);

@@ -18,6 +18,7 @@
 package org.breakthebot.townyWarp.commands;
 
 
+import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -36,19 +37,19 @@ public class deleteWarp implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label, String @NotNull [] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("Only players may use this command.");
+            TownyMessaging.sendErrorMsg("Only players may use this command.");
             return true;
         }
 
         if (args.length != 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: /" + label + " <name>");
+            TownyMessaging.sendErrorMsg(ChatColor.RED + "Usage: /" + label + " <name>");
             return false;
         }
 
         String name = args[0];
 
         if (!name.matches("[A-Za-z0-9_]{1,16}")) {
-            sender.sendMessage(ChatColor.RED + "Invalid name! Names may only contain letters, numbers, and underscores, up to 16 chars.");
+            TownyMessaging.sendErrorMsg(ChatColor.RED + "Invalid name! Names may only contain letters, numbers, and underscores, up to 16 chars.");
             return true;
         }
 
@@ -58,7 +59,7 @@ public class deleteWarp implements CommandExecutor {
             Resident resident = towny.getResident(player.getUniqueId());
 
             if (!resident.hasTown()) {
-                player.sendMessage(ChatColor.RED + "You are not in a town.");
+                TownyMessaging.sendMsg(ChatColor.RED + "You are not in a town.");
                 return true;
             }
 
@@ -67,16 +68,16 @@ public class deleteWarp implements CommandExecutor {
             if (town.getMayor().equals(resident)) {
 
                 MetaDataHelper.removeWarp(town, name);
-                player.sendMessage(ChatColor.GREEN + "Warp added successfully");
+               TownyMessaging.sendMsg(ChatColor.GREEN + "Warp added successfully");
                 return true;
 
             } else {
-                player.sendMessage(ChatColor.RED + "You must be the town’s Mayor to run this.");
+               TownyMessaging.sendMsg(ChatColor.RED + "You must be the town’s Mayor to run this.");
                 return false;
             }
 
         } catch (NotRegisteredException e) {
-            player.sendMessage(ChatColor.RED + "Towny data not found. Try again later.");
+           TownyMessaging.sendMsg(ChatColor.RED + "Towny data not found. Try again later.");
         }
 
         return true;

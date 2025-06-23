@@ -19,6 +19,7 @@ package org.breakthebot.townyWarp.commands;
 
 
 import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.bukkit.towny.TownyMessaging;
 import org.breakthebot.townyWarp.Warp;
 import org.breakthebot.townyWarp.utils.MetaDataHelper;
 import org.bukkit.ChatColor;
@@ -36,27 +37,27 @@ public class warp implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label, String @NotNull [] args){
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("Only players may use this command.");
+            TownyMessaging.sendErrorMsg("Only players may use this command.");
             return true;
         }
 
         if (args.length != 2) {
-            sender.sendMessage(ChatColor.RED + "Usage: /" + label + " <name>");
+            TownyMessaging.sendErrorMsg(ChatColor.RED + "Usage: /" + label + " <name>");
             return false;
         }
         String townName = args[0];
         String warpName = args[1];
         if (!townName.matches("[A-Za-z0-9_]{1,16}") && warpName.matches("[A-Za-z0-9_]{1,16}")) {
-            sender.sendMessage(ChatColor.RED + "Invalid name! Names may only contain letters, numbers, and underscores, up to 16 chars.");
+            TownyMessaging.sendErrorMsg(ChatColor.RED + "Invalid name! Names may only contain letters, numbers, and underscores, up to 16 chars.");
             return true;
         }
         try {
             Warp targetWarp = MetaDataHelper.getWarp(TownyAPI.getInstance().getTown(townName), warpName).orElseThrow();
             Warp.AccessLevel permLvl = targetWarp.getPermLevel();
-
+            if (permLvl)
 
         } catch (NoSuchElementException e) {
-            sender.sendMessage(townName + " has no warp named " + warpName);
+            TownyMessaging.sendErrorMsg(townName + " has no warp named " + warpName);
         }
 
         return true;

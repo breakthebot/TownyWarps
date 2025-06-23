@@ -18,10 +18,12 @@
 package org.breakthebot.townyWarp.commands;
 
 
+import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+import org.breakthebot.townyWarp.TownyWarp;
 import org.breakthebot.townyWarp.Warp;
 import org.breakthebot.townyWarp.utils.MetaDataHelper;
 import org.bukkit.ChatColor;
@@ -37,19 +39,19 @@ public class addWarp implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label, String @NotNull [] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("Only players may use this command.");
+            TownyMessaging.sendErrorMsg("Only players may use this command.");
             return true;
         }
 
         if (args.length != 1) {
-            sender.sendMessage(ChatColor.RED + "Usage: /" + label + " <name>");
+            TownyMessaging.sendErrorMsg(ChatColor.RED + "Usage: /" + label + " <name>");
             return false;
         }
 
         String name = args[0];
 
         if (!name.matches("[A-Za-z0-9_]{1,16}")) {
-            sender.sendMessage(ChatColor.RED + "Invalid name! Names may only contain letters, numbers, and underscores, up to 16 chars.");
+            TownyMessaging.sendErrorMsg(ChatColor.RED + "Invalid name! Names may only contain letters, numbers, and underscores, up to 16 chars.");
             return true;
         }
 
@@ -59,7 +61,7 @@ public class addWarp implements CommandExecutor {
             Resident resident = towny.getResident(player.getUniqueId());
 
             if (!resident.hasTown()) {
-                player.sendMessage(ChatColor.RED + "You are not in a town.");
+                TownyMessaging.sendErrorMsg(ChatColor.RED + "You are not in a town.");
                 return true;
             }
 
@@ -70,10 +72,13 @@ public class addWarp implements CommandExecutor {
                 double bal = town.getAccount().getHoldingBalance();
 
                 if (price > bal){
-                    player.sendMessage("You do not have enough gold for this warp");
+                    TownyMessaging.sendErrorMsg("You do not have enough gold for this warp");
                     return false;
                 }
-                if (MetaDataHelper.getWarpCount(town) == config)
+                if (TownyWarp.getInstance().getConf().maxWarps == MetaDataHelper.getWarpCount(town) && TownyWarp.getInstance().getConf().maxWarps != 1){
+                    TownyMessaging.sendErrorMsg("You have reached the allowed limit of warps on this server.");
+                    return false;
+                }
                 Warp warp = new Warp(
                         name,
                         player.getLocation(),
@@ -82,16 +87,16 @@ public class addWarp implements CommandExecutor {
                 );
 
                 MetaDataHelper.addWarp(town, warp);
-                player.sendMessage(ChatColor.GREEN + "Warp added successfully");
+                TownyMessaging.sendMsg(ChatColor.GREEN + "Warp added successfully");
                 return true;
 
             } else {
-                player.sendMessage(ChatColor.RED + "You must be the town’s Mayor to run this.");
+                TownyMessaging.sendErrorMsg(ChatColor.RED + "You must be the town’s Mayor to run this.");
                 return false;
             }
 
         } catch (NotRegisteredException e) {
-            player.sendMessage(ChatColor.RED + "Towny data not found. Try again later.");
+            TownyMessaging.sendErrorMsg(ChatColor.RED + "Towny data not found. Try again later.");
         }
 
         return true;
