@@ -1,5 +1,8 @@
 package org.breakthebot.townyWarp;
 
+import com.palmergames.bukkit.towny.TownyCommandAddonAPI;
+import org.breakthebot.townyWarp.commands.addWarp;
+import org.breakthebot.townyWarp.commands.warp;
 import org.breakthebot.townyWarp.utils.config;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,6 +14,7 @@ public final class TownyWarp extends JavaPlugin {
     public void onEnable() {
         instance = this;
         conf = new config(this);
+        TownyCommandAddonAPI.addSubCommand(TownyCommandAddonAPI.CommandType.TOWN, "warp", new warp());
 
         getLogger().info("TownyWarp has been enabled!");
     }

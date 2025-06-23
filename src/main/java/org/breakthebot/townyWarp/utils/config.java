@@ -21,24 +21,16 @@ import org.breakthebot.townyWarp.TownyWarp;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class config {
-    private final TownyWarp plugin;
-    private FileConfiguration cfg;
 
     public final int maxWarps;
-    public final double firstWarpCost;
-    public final double priceMultiplier;
-    public final int minSize;
-    public final int sizeMultiplier;
+    public final int firstWarpCost;
+    public final float priceMultiplier;
 
     public config(TownyWarp plugin) {
-        this.plugin = plugin;
-        this.cfg = plugin.getConfig();
-        plugin.saveDefaultConfig();
+        FileConfiguration cfg = plugin.getConfig();
         this.maxWarps = cfg.getInt("maxWarps", 5);
-        this.firstWarpCost = cfg.getDouble("firstWarpCost", 3);
-        this.priceMultiplier = cfg.getDouble("warpPriceMultiplier", 2);
-        this.minSize = cfg.getInt("minSize", -1);
-        this.sizeMultiplier = cfg.getInt("minSizePerWarp", -1);
+        this.firstWarpCost = cfg.getInt("firstWarpCost", 3);
+        this.priceMultiplier = (float) cfg.getDouble("warpPriceMultiplier", 2);
     }
 
 }

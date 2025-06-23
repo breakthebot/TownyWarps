@@ -34,13 +34,10 @@ public class Warp {
     private float pitch;
     private long createdAt;
     private String createdBy;
-    private int price;
     private AccessLevel permLevel = AccessLevel.RESIDENT;
     public Warp() {}
 
-    public enum AccessLevel {RESIDENT, OUTSIDER }
-
-    public Warp(String name, Location location, String createdBy, int price) {
+    public Warp(String name, Location location, String createdBye) {
         this.name = name;
         this.worldName = location.getWorld().getName();
         this.x = location.getX();
@@ -49,9 +46,10 @@ public class Warp {
         this.yaw = location.getYaw();
         this.pitch = location.getPitch();
         this.createdBy = createdBy;
-        this.price = price;
         this.createdAt = System.currentTimeMillis();
     }
+
+    public enum AccessLevel { RESIDENT, OUTSIDER }
 
     public String getName() { return name; }
     public String getWorldName() { return worldName; }
@@ -62,7 +60,6 @@ public class Warp {
     public float getPitch() { return pitch; }
     public long getCreatedAt() { return createdAt; }
     public String getCreatedBy() { return createdBy; }
-    public int getPrice(){return this.price;}
     public AccessLevel getPermLevel() {return this.permLevel;}
 
     public void setPermLevel(AccessLevel perm) {this.permLevel = perm;}
@@ -92,7 +89,6 @@ public class Warp {
     public String toString() {
         return "Warp{" +
                 "name='" + name + '\'' +
-                ", world='" + worldName + '\'' +
                 ", x=" + x +
                 ", y=" + y +
                 ", z=" + z +
@@ -100,8 +96,28 @@ public class Warp {
                 '}';
 
     }
+    public static int calculateTotalCost(int warpCount){
+        int base = TownyWarp.getInstance().getConf().firstWarpCost;
+        int total = base;
+        int lastCost = base;
+        int result;
+        for(int i = 2; i <= warpCount; i++){
+            result = (int) Math.ceil(lastCost * TownyWarp.getInstance().getConf().priceMultiplier);
+            total += result;
+            lastCost = result;
+        }
+        return total;
+    }
 
-    public static int calculateWarpPrice(int lastWarpCost) {
-        return lastWarpCost * 2;
+    public static int calculateWarpCost(int warpNumber){
+        int base = TownyWarp.getInstance().getConf().firstWarpCost;
+        int result = base;
+        int lastCost = base;
+
+        for(int i = 2; i <= warpNumber; i++){
+            result = (int) Math.ceil(lastCost * TownyWarp.getInstance().getConf().priceMultiplier);
+            lastCost = result;
+        }
+        return result;
     }
 }
