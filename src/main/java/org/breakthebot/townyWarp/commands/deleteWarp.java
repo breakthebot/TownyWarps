@@ -23,13 +23,11 @@ import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
-import org.breakthebot.townyWarp.utils.MetaDataHelper;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.breakthebot.townyWarp.MetaData.MetaDataHelper;
 
 public class deleteWarp{
 
@@ -41,7 +39,7 @@ public class deleteWarp{
             return true;
         }
 
-        if (args.length != 2) {
+        if (args.length != 3) {
             TownyMessaging.sendErrorMsg(player, "Usage: /" + label + " <name>");
             return false;
         }

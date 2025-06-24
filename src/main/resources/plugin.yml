@@ -2,7 +2,7 @@ name: TownyWarp
 version: '1.0-SNAPSHOT'
 main: org.breakthebot.townyWarp.TownyWarp
 api-version: '1.21'
-authors: [ charisk ]
+authors: [ charisk, Veyronity ]
 permissions:
   townwarps.warp.use:
     description: Allows using town warps
@@ -19,3 +19,7 @@ permissions:
   townwarps.warp.toggle:
     description: Toggle warp enable/disable (Mayor only)
     default: op
+
+dependencies:
+  - name: Towny
+    required: true

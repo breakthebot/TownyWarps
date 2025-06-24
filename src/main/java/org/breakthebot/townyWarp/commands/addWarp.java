@@ -20,26 +20,29 @@ import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+import org.breakthebot.townyWarp.MetaData.MetaDataHelper;
 import org.breakthebot.townyWarp.TownyWarp;
 import org.breakthebot.townyWarp.Warp;
-import org.breakthebot.townyWarp.utils.MetaDataHelper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.logging.Logger;
+
 
 public class addWarp {
+    private static final Logger LOGGER = TownyWarp.getInstance().getLogger();
 
     public static boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
-                             @NotNull String label, String @NotNull [] args) {
+                                    @NotNull String label, String @NotNull [] args) {
 
         if (!(sender instanceof Player player)) {
             TownyMessaging.sendErrorMsg(sender, "Only players may use this command.");
             return false;
         }
 
-        if (args.length != 2) {
+        if (args.length != 3) {
             TownyMessaging.sendErrorMsg(player, "Usage: /t warp add <name> <permLevel>");
             return false;
         }
@@ -47,7 +50,7 @@ public class addWarp {
         String name = args[1];
         String permLevel = args[2];
 
-        if (!(Warp.AccessLevel.OUTSIDER.name().toLowerCase().equals(permLevel) | Warp.AccessLevel.RESIDENT.name().toLowerCase().equals(permLevel))){
+        if (!(permLevel.equalsIgnoreCase("resident") || permLevel.equalsIgnoreCase("outsider"))){
             TownyMessaging.sendErrorMsg(player, "Invalid Permission level. You may only choose resident or outsider.");
             return false;
         }
@@ -61,6 +64,7 @@ public class addWarp {
 
             Resident resident = towny.getResident(player.getUniqueId());
 
+            assert resident != null;
             if (!resident.hasTown()) {
                 TownyMessaging.sendErrorMsg(player, "You are not in a town.");
                 return false;
@@ -88,8 +92,9 @@ public class addWarp {
                         player.getLocation(),
                         sender.getName()
                 );
-                warp.setPermLevel(Warp.AccessLevel.valueOf(permLevel));
+                warp.setPermLevel(Warp.AccessLevel.valueOf(permLevel.toUpperCase()));
                 MetaDataHelper.addWarp(town, warp);
+
                 TownyMessaging.sendMsg(player, "Warp added successfully");
                 return true;
 
@@ -99,11 +104,11 @@ public class addWarp {
             }
 
         } catch (Exception e) {
-            TownyMessaging.sendErrorMsg(player, "Towny data not found. Try again later.");
+            TownyMessaging.sendErrorMsg(player, "Towny data not found. Try again later. ");
+            e.printStackTrace();
+            LOGGER.severe("Unexpected error while trying to create warp: " + e);
         }
 
         return true;
     }
-
-
 }
