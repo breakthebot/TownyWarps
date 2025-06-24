@@ -108,4 +108,5 @@ public final class MetaDataHelper {
     public static boolean hasWarp(@NotNull Town town, @NotNull String warpName) {
         return getWarp(town, warpName).isPresent();
     }
+
 }
