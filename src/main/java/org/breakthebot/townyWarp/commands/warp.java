@@ -47,7 +47,7 @@ public class warp implements CommandExecutor {
         switch (args[0]) {
             case "add" -> addWarp.onCommand(sender, command, label, args);
             case "remove" -> deleteWarp.onCommand(sender, command, label, args);
-        };
+        }
 
 
         if (args.length == 2) {
@@ -62,6 +62,7 @@ public class warp implements CommandExecutor {
                 Resident res = townyApi.getResident(player.getName());
 
                 if (permLvl.name().equals("OUTSIDER")) {
+                    assert res != null;
                     if (!res.hasTown()) {
                         TownyMessaging.sendErrorMsg(player, "You must be part of a town.");
                         return false;

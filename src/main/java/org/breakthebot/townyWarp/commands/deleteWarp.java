@@ -39,23 +39,19 @@ public class deleteWarp{
             return true;
         }
 
-        if (args.length != 3) {
-            TownyMessaging.sendErrorMsg(player, "Usage: /" + label + " <name>");
+        if (args.length != 2) {
+            TownyMessaging.sendErrorMsg(player, "Usage: /t warp remove <name>");
             return false;
         }
 
         String name = args[1];
-
-        if (!name.matches("[A-Za-z0-9_]{1,16}")) {
-            TownyMessaging.sendErrorMsg(player, "Invalid name! Names may only contain letters, numbers, and underscores, up to 16 chars.");
-            return true;
-        }
 
         try {
             TownyUniverse towny = TownyUniverse.getInstance();
 
             Resident resident = towny.getResident(player.getUniqueId());
 
+            assert resident != null;
             if (!resident.hasTown()) {
                 TownyMessaging.sendErrorMsg(player, "You are not in a town.");
                 return true;
@@ -65,9 +61,13 @@ public class deleteWarp{
 
             if (town.getMayor().equals(resident)) {
 
-                MetaDataHelper.removeWarp(town, name);
-               TownyMessaging.sendMsg(player,"Warp added successfully");
-                return true;
+               boolean success = MetaDataHelper.removeWarp(town, name);
+               if (success) {
+                    TownyMessaging.sendMsg(player, "Warp removed successfully");
+                } else {
+                    TownyMessaging.sendErrorMsg(player, "Warp not found or an error occurred");
+                }
+                return success;
 
             } else {
                TownyMessaging.sendMsg(player,"You must be the town’s Mayor to run this.");

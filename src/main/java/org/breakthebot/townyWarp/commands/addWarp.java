@@ -93,10 +93,15 @@ public class addWarp {
                         sender.getName()
                 );
                 warp.setPermLevel(Warp.AccessLevel.valueOf(permLevel.toUpperCase()));
-                MetaDataHelper.addWarp(town, warp);
 
-                TownyMessaging.sendMsg(player, "Warp added successfully");
-                return true;
+                boolean success = MetaDataHelper.addWarp(town, warp);
+
+                if (success) {
+                    TownyMessaging.sendMsg(player, "Warp added successfully");
+                } else {
+                    TownyMessaging.sendErrorMsg(player, "Warp not added; An error occurred");
+                }
+                return success;
 
             } else {
                 TownyMessaging.sendErrorMsg(player, "You must be the Mayor to run this.");
@@ -105,7 +110,7 @@ public class addWarp {
 
         } catch (Exception e) {
             TownyMessaging.sendErrorMsg(player, "Towny data not found. Try again later. ");
-            e.printStackTrace();
+//            e.printStackTrace();
             LOGGER.severe("Unexpected error while trying to create warp: " + e);
         }
 

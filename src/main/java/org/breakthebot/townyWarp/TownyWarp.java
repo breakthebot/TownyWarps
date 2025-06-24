@@ -20,8 +20,8 @@ public final class TownyWarp extends JavaPlugin {
         conf = new config(this);
 
         AddonCommand warpCommand = new AddonCommand(TownyCommandAddonAPI.CommandType.TOWN, "warp", new warp());
-        warpCommand.setTabCompletion(0, TownyAPI.getInstance().getTowns().stream().map(TownyObject::getName).toList());
-        warpCommand.setTabCompletion(1, Arrays.asList("suggestions", "for", "second", "argument"));
+//        warpCommand.setTabCompletion(0, TownyAPI.getInstance().getTowns().stream().map(TownyObject::getName).toList());
+//        warpCommand.setTabCompletion(1, Arrays.asList("suggestions", "for", "second", "argument"));
         TownyCommandAddonAPI.addSubCommand(warpCommand);
 
 //        TownyCommandAddonAPI.addSubCommand(TownyCommandAddonAPI.CommandType.TOWN, "warp", new warp());
