@@ -57,6 +57,10 @@ public final class MetaDataHelper {
         }
     }
 
+    public static @NotNull List<Warp> getTownWarps(@NotNull String townName) {
+        return getTownWarps(TownyAPI.getInstance().getTown(townName));
+    }
+
     public static @NotNull List<Warp> getTownWarps(@NotNull Town town) {
         StringDataField warpData = (StringDataField) town.getMetadata(WARP_METADATA_KEY);
         if (warpData == null || warpData.getValue().isEmpty()) {

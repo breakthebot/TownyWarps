@@ -21,7 +21,6 @@ import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.object.AddonCommand;
 import com.palmergames.bukkit.towny.object.Resident;
 import org.breakthebot.townyWarp.MetaData.MetaDataHelper;
 import org.breakthebot.townyWarp.Warp;
@@ -38,6 +37,7 @@ public class warp implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label, String @NotNull [] args) {
+        TownyAPI townyApi = TownyAPI.getInstance();
 
         if (!(sender instanceof Player player)) {
             TownyMessaging.sendErrorMsg(sender, "Only players may use this command.");
@@ -45,15 +45,27 @@ public class warp implements CommandExecutor {
         }
 
         switch (args[0]) {
-            case "add" -> addWarp.onCommand(sender, command, label, args);
-            case "remove" -> deleteWarp.onCommand(sender, command, label, args);
+            case "add" -> {
+                return addWarp.onCommand(sender, command, label, args);
+            }
+            case "remove" -> {
+                return deleteWarp.onCommand(sender, command, label, args);
+            }
+            case "list" -> {
+                return listWarp.onCommand(sender,command,label,args);
+            }
         }
 
+       String townName;
+       String warpName;
 
-       String townName = args[0];
-       String warpName = args[1];
-
-       TownyAPI townyApi = TownyAPI.getInstance();
+       if (args.length == 1){
+           townName = townyApi.getTownName(player);
+           warpName = args[0];
+       } else {
+           townName = args[0];
+           warpName = args[1];
+       }
 
        try {
            Warp targetWarp = MetaDataHelper.getWarp(townyApi.getTown(townName), warpName).orElseThrow();
