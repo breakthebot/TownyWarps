@@ -15,7 +15,7 @@
  * along with TownyWarp. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.breakthebot.townyWarp;
+package org.breakthebot.TownyWarps;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -97,12 +97,12 @@ public class Warp {
 
     }
     public static int calculateTotalCost(int warpCount){
-        int base = TownyWarp.getInstance().getConf().firstWarpCost;
+        int base = TownyWarps.getInstance().getConf().firstWarpCost;
         int total = base;
         int lastCost = base;
         int result;
         for(int i = 2; i <= warpCount; i++){
-            result = (int) Math.ceil(lastCost * TownyWarp.getInstance().getConf().priceMultiplier);
+            result = (int) Math.ceil(lastCost * TownyWarps.getInstance().getConf().priceMultiplier);
             total += result;
             lastCost = result;
         }
@@ -110,12 +110,12 @@ public class Warp {
     }
 
     public static int calculateWarpCost(int warpNumber){
-        int base = TownyWarp.getInstance().getConf().firstWarpCost;
+        int base = TownyWarps.getInstance().getConf().firstWarpCost;
         int result = base;
         int lastCost = base;
 
         for(int i = 2; i <= warpNumber; i++){
-            result = (int) Math.ceil(lastCost * TownyWarp.getInstance().getConf().priceMultiplier);
+            result = (int) Math.ceil(lastCost * TownyWarps.getInstance().getConf().priceMultiplier);
             lastCost = result;
         }
         return result;

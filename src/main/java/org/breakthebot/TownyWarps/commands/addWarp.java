@@ -15,15 +15,14 @@
  * along with TownyWarp. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.breakthebot.townyWarp.commands;
+package org.breakthebot.TownyWarps.commands;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
-import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
-import org.breakthebot.townyWarp.MetaData.MetaDataHelper;
-import org.breakthebot.townyWarp.TownyWarp;
-import org.breakthebot.townyWarp.Warp;
+import org.breakthebot.TownyWarps.MetaData.MetaDataHelper;
+import org.breakthebot.TownyWarps.TownyWarps;
+import org.breakthebot.TownyWarps.Warp;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,7 +32,7 @@ import java.util.logging.Logger;
 
 
 public class addWarp {
-    private static final Logger LOGGER = TownyWarp.getInstance().getLogger();
+    private static final Logger LOGGER = TownyWarps.getInstance().getLogger();
 
     public static boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                                     @NotNull String label, String @NotNull [] args) {
@@ -83,7 +82,7 @@ public class addWarp {
                     return false;
                 }
 
-                if (TownyWarp.getInstance().getConf().maxWarps == MetaDataHelper.getWarpCount(town)){
+                if (TownyWarps.getInstance().getConf().maxWarps == MetaDataHelper.getWarpCount(town)){
                     TownyMessaging.sendErrorMsg(player, "You have reached the allowed limit of warps on this server.");
                     return false;
                 }

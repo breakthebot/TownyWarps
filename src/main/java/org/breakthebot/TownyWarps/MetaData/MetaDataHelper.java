@@ -1,15 +1,14 @@
-package org.breakthebot.townyWarp.MetaData;
+package org.breakthebot.TownyWarps.MetaData;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.metadata.StringDataField;
-import org.breakthebot.townyWarp.TownyWarp;
-import org.breakthebot.townyWarp.Warp;
+import org.breakthebot.TownyWarps.TownyWarps;
+import org.breakthebot.TownyWarps.Warp;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -21,7 +20,7 @@ public final class MetaDataHelper {
     private static final Gson gson = new Gson();
     private static MetaDataHelper instance;
     private static final String WARP_METADATA_KEY = "town_warps";
-    private static final Logger logger = TownyWarp.getInstance().getLogger();
+    private static final Logger logger = TownyWarps.getInstance().getLogger();
 
     private MetaDataHelper() {}
 

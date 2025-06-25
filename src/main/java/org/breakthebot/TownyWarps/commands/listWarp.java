@@ -15,13 +15,13 @@
  * along with TownyWarp. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.breakthebot.townyWarp.commands;
+package org.breakthebot.TownyWarps.commands;
 
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
-import org.breakthebot.townyWarp.MetaData.MetaDataHelper;
-import org.breakthebot.townyWarp.Warp;
+import org.breakthebot.TownyWarps.MetaData.MetaDataHelper;
+import org.breakthebot.TownyWarps.Warp;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -37,11 +37,16 @@ public class listWarp {
         }
         TownyAPI townyApi = TownyAPI.getInstance();
         String townName;
-        if (args.length == 2) {townName = args[1];}
+        if (args.length == 2) {
+//            townName = args[1];
+            townName = String.valueOf(townyApi.getTown(args[1]));
+        }
         else townName = townyApi.getTownName(player);
 
         List<String> warpNames = MetaDataHelper.getTownWarps(townName).stream().map(Warp::getName).toList();
-        TownyMessaging.sendMessage(player, "Town: " + townName + '\n' );
+        String warpList = String.join(", ", warpNames);
+
+        TownyMessaging.sendMsg(player, "&bList of warps for " + townName + ": \n" + warpList);
         return true;
     }
 

@@ -1,23 +1,20 @@
-name: TownyWarp
-version: '1.0-SNAPSHOT'
-main: org.breakthebot.townyWarp.TownyWarp
+name: TownyWarps
+version: '1.0'
+main: org.breakthebot.TownyWarps.TownyWarps
 api-version: '1.21'
 authors: [ charisk, Veyronity ]
 permissions:
-  townwarps.warp.use:
+  townywarps.warp.use:
     description: Allows using town warps
     default: true
-  townwarps.warp.create:
+  townywarps.warp.create:
     description: Allows creating warps (Mayor only)
     default: op
-  townwarps.warp.delete:
+  townywarps.warp.delete:
     description: Allows deleting warps (Mayor only)
     default: op
-  townwarps.warp.level:
+  townywarps.warp.level:
     description: Allows changing warp access level (Mayor only)
-    default: op
-  townwarps.warp.toggle:
-    description: Toggle warp enable/disable (Mayor only)
     default: op
 
 dependencies:

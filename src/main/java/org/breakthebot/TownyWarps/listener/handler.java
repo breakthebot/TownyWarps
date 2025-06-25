@@ -15,15 +15,15 @@
  * along with TownyWarp. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.breakthebot.townyWarp.listener;
+package org.breakthebot.TownyWarps.listener;
 
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.event.NewDayEvent;
 import com.palmergames.bukkit.towny.object.Town;
-import org.breakthebot.townyWarp.MetaData.MetaDataHelper;
-import org.breakthebot.townyWarp.Warp;
+import org.breakthebot.TownyWarps.MetaData.MetaDataHelper;
+import org.breakthebot.TownyWarps.Warp;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
