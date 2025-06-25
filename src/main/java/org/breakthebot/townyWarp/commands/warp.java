@@ -83,7 +83,7 @@ public class warp implements CommandExecutor {
 
            } else if (permLvl.name().equals("RESIDENT")) {
                assert res != null;
-               if (!res.hasTown() || !res.getTown().getName().equals(townName)) {
+               if (!res.hasTown() || !res.getTown().getName().equalsIgnoreCase(townName)) {
                    TownyMessaging.sendErrorMsg(player, "This warp is only open for residents.");
                    return false;
                }
