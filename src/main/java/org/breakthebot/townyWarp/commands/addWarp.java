@@ -88,6 +88,11 @@ public class addWarp {
                     return false;
                 }
 
+                if (MetaDataHelper.hasWarp(town, name)){
+                    TownyMessaging.sendErrorMsg(player, "A warp with that name already exists");
+                    return false;
+                }
+
                 Warp warp = new Warp(
                         name,
                         player.getLocation(),
