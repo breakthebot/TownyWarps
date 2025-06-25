@@ -2,17 +2,20 @@ package org.breakthebot.townyWarp.MetaData;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.metadata.StringDataField;
 import org.breakthebot.townyWarp.TownyWarp;
 import org.breakthebot.townyWarp.Warp;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.Base64;
+
 
 public final class MetaDataHelper {
     private static final Gson gson = new Gson();
@@ -20,27 +23,41 @@ public final class MetaDataHelper {
     private static final String WARP_METADATA_KEY = "town_warps";
     private static final Logger logger = TownyWarp.getInstance().getLogger();
 
+    private MetaDataHelper() {}
+
+    public static MetaDataHelper getInstance() {
+        if (instance == null)
+            instance = new MetaDataHelper();
+        return instance;
+    }
+
     public static String getWarpMetadataKey() {
         return WARP_METADATA_KEY;
     }
 
-    private MetaDataHelper() {}
 
-    public static MetaDataHelper getInstance() {
-        if (instance == null) {
-            instance = new MetaDataHelper();
+    public void setTownWarps(@NotNull Town town, @NotNull List<Warp> warps) {
+        try {
+            if (town.hasMeta(WARP_METADATA_KEY)) {
+                town.removeMetaData(WARP_METADATA_KEY);
+            }
+
+            if (!warps.isEmpty()) {
+                String json = gson.toJson(warps);
+                String base64 = Base64.getEncoder()
+                        .encodeToString(json.getBytes(StandardCharsets.UTF_8));
+                StringDataField field = new StringDataField(WARP_METADATA_KEY, base64);
+                town.addMetaData(field);
+            }
+
+            town.save();
+
+        } catch (Exception e) {
+            logger.severe("Failed to save town metadata after warp update: " + e.getMessage());
         }
-        return instance;
     }
 
-    public void setTownWarps(@NotNull Town town, @NotNull List<Warp> value) {
-        String json = gson.toJson(value);
-        String base64 = Base64.getEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8));
-        StringDataField field = new StringDataField(WARP_METADATA_KEY, base64);
-        town.addMetaData(field);
-    }
-
-    public static List<Warp> getTownWarps(@NotNull Town town) {
+    public static @NotNull List<Warp> getTownWarps(@NotNull Town town) {
         StringDataField warpData = (StringDataField) town.getMetadata(WARP_METADATA_KEY);
         if (warpData == null || warpData.getValue().isEmpty()) {
             return new ArrayList<>();
@@ -48,7 +65,8 @@ public final class MetaDataHelper {
 
         try {
             String base64 = warpData.getValue();
-            String json = new String(Base64.getDecoder().decode(base64), StandardCharsets.UTF_8);
+            String json = new String(Base64.getDecoder()
+                    .decode(base64), StandardCharsets.UTF_8);
             Type listType = new TypeToken<List<Warp>>() {}.getType();
             List<Warp> warps = gson.fromJson(json, listType);
             return warps != null ? warps : new ArrayList<>();
@@ -63,19 +81,15 @@ public final class MetaDataHelper {
     }
 
     public static Optional<Warp> getWarp(@NotNull Town town, @NotNull String warpName) {
-        return getTownWarps(town)
-                .stream()
+        return getTownWarps(town).stream()
                 .filter(w -> w.getName().equalsIgnoreCase(warpName))
                 .findFirst();
     }
 
     public static boolean addWarp(@NotNull Town town, @NotNull Warp newWarp) {
         List<Warp> warps = getTownWarps(town);
-        for (Warp w : warps) {
-            if (w.getName().equalsIgnoreCase(newWarp.getName())) {
-                return false;
-            }
-        }
+        if (warps.stream().anyMatch(w -> w.getName().equalsIgnoreCase(newWarp.getName())))
+            return false;
         warps.add(newWarp);
         getInstance().setTownWarps(town, warps);
         return true;
@@ -83,6 +97,7 @@ public final class MetaDataHelper {
 
     public static boolean removeWarp(@NotNull Town town, @NotNull String warpName) {
         List<Warp> warps = getTownWarps(town);
+
         for (int i = 0; i < warps.size(); i++) {
             if (warps.get(i).getName().equalsIgnoreCase(warpName)) {
                 warps.remove(i);
@@ -93,7 +108,8 @@ public final class MetaDataHelper {
         return false;
     }
 
-    public static boolean updateWarp(@NotNull Town town, @NotNull String warpName, @NotNull Warp updatedWarp) {
+    public static boolean updateWarp(@NotNull Town town, @NotNull String warpName,
+                                     @NotNull Warp updatedWarp) {
         List<Warp> warps = getTownWarps(town);
         for (int i = 0; i < warps.size(); i++) {
             if (warps.get(i).getName().equalsIgnoreCase(warpName)) {
@@ -108,5 +124,4 @@ public final class MetaDataHelper {
     public static boolean hasWarp(@NotNull Town town, @NotNull String warpName) {
         return getWarp(town, warpName).isPresent();
     }
-
 }

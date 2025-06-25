@@ -50,49 +50,43 @@ public class warp implements CommandExecutor {
         }
 
 
-        if (args.length == 2) {
-            String townName = args[0];
-            String warpName = args[1];
+       String townName = args[0];
+       String warpName = args[1];
 
-            TownyAPI townyApi = TownyAPI.getInstance();
+       TownyAPI townyApi = TownyAPI.getInstance();
 
-            try {
-                Warp targetWarp = MetaDataHelper.getWarp(townyApi.getTown(townName), warpName).orElseThrow();
-                Warp.AccessLevel permLvl = targetWarp.getPermLevel();
-                Resident res = townyApi.getResident(player.getName());
+       try {
+           Warp targetWarp = MetaDataHelper.getWarp(townyApi.getTown(townName), warpName).orElseThrow();
+           Warp.AccessLevel permLvl = targetWarp.getPermLevel();
+           Resident res = townyApi.getResident(player.getName());
+           if (permLvl.name().equals("OUTSIDER")) {
+               assert res != null;
+               if (!res.hasTown()) {
+                   TownyMessaging.sendErrorMsg(player, "You must be part of a town.");
+                   return false;
+               }
+               Location loc = targetWarp.toLocation();
+               townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
+               return true;
 
-                if (permLvl.name().equals("OUTSIDER")) {
-                    assert res != null;
-                    if (!res.hasTown()) {
-                        TownyMessaging.sendErrorMsg(player, "You must be part of a town.");
-                        return false;
-                    }
-                    Location loc = targetWarp.toLocation();
-                    townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
-                    return true;
+           } else if (permLvl.name().equals("RESIDENT")) {
+               assert res != null;
+               if (!res.hasTown() || !res.getTown().getName().equals(townName)) {
+                   TownyMessaging.sendErrorMsg(player, "This warp is only open for residents.");
+                   return false;
+               }
+               Location loc = targetWarp.toLocation();
+               townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
+               return true;
+           }
 
-                } else if (permLvl.name().equals("RESIDENT")) {
-                    assert res != null;
-                    if (!res.hasTown() || !res.getTown().getName().equals(townName)) {
-                        TownyMessaging.sendErrorMsg(player, "This warp is only open for residents.");
-                        return false;
-                    }
-                    Location loc = targetWarp.toLocation();
-                    townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
-                    return true;
-                }
+       } catch (NoSuchElementException e) {
+           TownyMessaging.sendErrorMsg(player, townName + " has no warp named " + warpName);
+       } catch (NotRegisteredException e) {
+           TownyMessaging.sendErrorMsg(player, townName + " does not exist");
+       }
 
-
-            } catch (NoSuchElementException e) {
-                TownyMessaging.sendErrorMsg(player, townName + " has no warp named " + warpName);
-            } catch (NotRegisteredException e) {
-                TownyMessaging.sendErrorMsg(player, townName + " does not exist");
-            }
-
-            return true;
-        }
-
-        if (args.length < 3) {
+        if (args.length > 3) {
             TownyMessaging.sendErrorMsg(player, "Usage: /t warp <town> <name>");
             return false;
         }

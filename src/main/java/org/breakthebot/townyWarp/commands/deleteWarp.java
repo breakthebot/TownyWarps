@@ -49,7 +49,7 @@ public class deleteWarp{
         try {
             TownyUniverse towny = TownyUniverse.getInstance();
 
-            Resident resident = towny.getResident(player.getUniqueId());
+            Resident resident = towny.getResident(player.getName());
 
             assert resident != null;
             if (!resident.hasTown()) {
@@ -58,15 +58,15 @@ public class deleteWarp{
             }
 
             Town town = resident.getTown();
-
+            assert town != null;
             if (town.getMayor().equals(resident)) {
 
                boolean success = MetaDataHelper.removeWarp(town, name);
                if (success) {
                     TownyMessaging.sendMsg(player, "Warp removed successfully");
-                } else {
-                    TownyMessaging.sendErrorMsg(player, "Warp not found or an error occurred");
-                }
+               } else {
+                   TownyMessaging.sendErrorMsg(player, "Warp not found or an error occurred");
+               }
                 return success;
 
             } else {

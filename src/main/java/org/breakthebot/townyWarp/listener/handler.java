@@ -18,5 +18,37 @@
 package org.breakthebot.townyWarp.listener;
 
 
-public class handler {
+import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.bukkit.towny.TownyMessaging;
+import com.palmergames.bukkit.towny.event.NewDayEvent;
+import com.palmergames.bukkit.towny.object.Town;
+import org.breakthebot.townyWarp.MetaData.MetaDataHelper;
+import org.breakthebot.townyWarp.Warp;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+import java.util.List;
+
+public class handler implements Listener {
+
+    @EventHandler
+    public void onNewDay(NewDayEvent event){
+        for (Town town : TownyAPI.getInstance().getTowns()) {
+            List<Warp> warps = MetaDataHelper.getTownWarps(town);
+            int warpCount = warps.size();
+            double balance = town.getAccount().getHoldingBalance();
+            int cost = Warp.calculateTotalCost(warpCount);
+            if (balance < cost){
+                while (warpCount > 0 && Warp.calculateTotalCost(warpCount) > balance) {
+                    warps.remove(warpCount - 1);
+                    warpCount--;
+                    TownyMessaging.sendPrefixedTownMessage(town, "Your town has lost some warps due to insufficient funds.");
+                }
+                MetaDataHelper.getInstance().setTownWarps(town, warps);
+                return;
+            }
+
+            town.getAccount().withdraw(cost, "Warp cost");
+        }
+    }
 }

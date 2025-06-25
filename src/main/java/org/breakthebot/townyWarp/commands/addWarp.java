@@ -16,6 +16,7 @@
  */
 
 package org.breakthebot.townyWarp.commands;
+import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -60,9 +61,9 @@ public class addWarp {
         }
 
         try {
-            TownyUniverse towny = TownyUniverse.getInstance();
+            TownyAPI towny = TownyAPI.getInstance();
 
-            Resident resident = towny.getResident(player.getUniqueId());
+            Resident resident = towny.getResident(player.getName());
 
             assert resident != null;
             if (!resident.hasTown()) {
@@ -110,7 +111,6 @@ public class addWarp {
 
         } catch (Exception e) {
             TownyMessaging.sendErrorMsg(player, "Towny data not found. Try again later. ");
-//            e.printStackTrace();
             LOGGER.severe("Unexpected error while trying to create warp: " + e);
         }
 
