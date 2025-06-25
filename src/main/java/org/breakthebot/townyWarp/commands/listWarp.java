@@ -41,7 +41,7 @@ public class listWarp {
         else townName = townyApi.getTownName(player);
 
         List<String> warpNames = MetaDataHelper.getTownWarps(townName).stream().map(Warp::getName).toList();
-        TownyMessaging.sendMsg(player, "Town: " + townName + '\n' + String.join("\n", warpNames ));
+        TownyMessaging.sendMsg(player, "List of warps for Athens: " + townName + '\n' + String.join("\n", warpNames ));
         return true;
     }
 
