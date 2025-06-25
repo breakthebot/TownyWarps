@@ -18,7 +18,6 @@
 package org.breakthebot.townyWarp.commands;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
-import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import org.breakthebot.townyWarp.MetaData.MetaDataHelper;
