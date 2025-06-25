@@ -15,7 +15,7 @@
  * along with TownyWarp. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.breakthebot.townyWarp.commands;
+package org.breakthebot.TownyWarps.commands;
 
 
 import com.palmergames.bukkit.towny.TownyMessaging;
@@ -27,7 +27,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.breakthebot.townyWarp.MetaData.MetaDataHelper;
+import org.breakthebot.TownyWarps.MetaData.MetaDataHelper;
 
 public class deleteWarp{
 

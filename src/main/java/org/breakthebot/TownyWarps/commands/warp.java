@@ -15,15 +15,16 @@
  * along with TownyWarp. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.breakthebot.townyWarp.commands;
+package org.breakthebot.TownyWarps.commands;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
-import org.breakthebot.townyWarp.MetaData.MetaDataHelper;
-import org.breakthebot.townyWarp.Warp;
+import com.palmergames.bukkit.towny.object.Translatable;
+import org.breakthebot.TownyWarps.MetaData.MetaDataHelper;
+import org.breakthebot.TownyWarps.Warp;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -89,6 +90,7 @@ public class warp implements CommandExecutor {
                }
                Location loc = targetWarp.toLocation();
                townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
+//               TownyMessaging.sendMsg(player, Translatable.of("msg_town_spawn_warmup", TownySettings.getTeleportWarmupTime()));
                return true;
            }
 

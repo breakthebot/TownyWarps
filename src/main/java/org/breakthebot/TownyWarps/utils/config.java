@@ -15,9 +15,9 @@
  * along with TownyWarp. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.breakthebot.townyWarp.utils;
+package org.breakthebot.TownyWarps.utils;
 
-import org.breakthebot.townyWarp.TownyWarp;
+import org.breakthebot.TownyWarps.TownyWarps;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class config {
@@ -26,7 +26,7 @@ public class config {
     public final int firstWarpCost;
     public final float priceMultiplier;
 
-    public config(TownyWarp plugin) {
+    public config(TownyWarps plugin) {
         FileConfiguration cfg = plugin.getConfig();
         this.maxWarps = cfg.getInt("maxWarps", 5);
         this.firstWarpCost = cfg.getInt("firstWarpCost", 3);
