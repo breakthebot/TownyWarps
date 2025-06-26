@@ -21,12 +21,12 @@ package org.breakthebot.TownyWarps.listener;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.event.NewDayEvent;
+import com.palmergames.bukkit.towny.event.teleport.CancelledTownyTeleportEvent;
+import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.TeleportRequest;
 import com.palmergames.bukkit.towny.object.Town;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.breakthebot.TownyWarps.MetaData.MetaDataHelper;
-import org.breakthebot.TownyWarps.TownyWarps;
 import org.breakthebot.TownyWarps.Warp;
-import org.breakthebot.TownyWarps.utils.TeleportUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,15 +34,13 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.List;
-import java.util.UUID;
 
 public class handler implements Listener {
-    private TownyWarps plugin = TownyWarps.getInstance();
-    private final TeleportUtil tpUtil = TeleportUtil.getInstance();
+    private final TownyAPI API = TownyAPI.getInstance();
 
     @EventHandler
     public void onNewDay(NewDayEvent event){
-        for (Town town : TownyAPI.getInstance().getTowns()) {
+        for (Town town : API.getTowns()) {
             List<Warp> warps = MetaDataHelper.getTownWarps(town);
             int warpCount = warps.size();
             double balance = town.getAccount().getHoldingBalance();
@@ -62,34 +60,28 @@ public class handler implements Listener {
     }
 
     @EventHandler
-    public void onPlayerDamage(EntityDamageEvent ev){
-        if (!(ev.getEntity() instanceof Player player)) return;
-        UUID id = player.getUniqueId();
-        ScheduledTask task = tpUtil.getPendingTeleports().get(id);
-        if (task != null) {
-            tpUtil.cancelTeleport(id);
-
+    public void onPlayerDamage(EntityDamageEvent event){
+        if (!(event.getEntity() instanceof Player player)) return;
+        Resident res = API.getResident(player);
+        if (res != null && res.hasRequestedTeleport()) {
+            API.abortTeleportRequest(res, CancelledTownyTeleportEvent.CancelledTeleportReason.DAMAGE);
             TownyMessaging.sendMsg(player, "Teleportation canceled because of damage.");
-
         }
     }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-
         if (
                 event.getFrom().getBlockX() != event.getTo().getBlockX()
                 || event.getFrom().getBlockY() != event.getTo().getBlockY()
                 || event.getFrom().getBlockZ() != event.getTo().getBlockZ()
         ) {
+            Resident res = API.getResident(player);
 
-            UUID uuid = player.getUniqueId();
-            ScheduledTask task =  tpUtil.getPendingTeleports().get(uuid);
-            if (task != null) {
-                tpUtil.cancelTeleport(uuid);
-                TownyMessaging.sendMsg(player, "Teleportation canceled because of movement.");
-
+            if (res != null && res.hasRequestedTeleport()) {
+                API.abortTeleportRequest(res, CancelledTownyTeleportEvent.CancelledTeleportReason.MOVEMENT);
+                TownyMessaging.sendErrorMsg(player, "Teleportation canceled because of movement.");
             }
         }
     }

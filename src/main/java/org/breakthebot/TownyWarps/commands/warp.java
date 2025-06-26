@@ -22,10 +22,8 @@ import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.utils.SpawnUtil;
 import org.breakthebot.TownyWarps.MetaData.MetaDataHelper;
 import org.breakthebot.TownyWarps.Warp;
-import org.breakthebot.TownyWarps.utils.TeleportUtil;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -40,7 +38,6 @@ import java.util.NoSuchElementException;
 
 
 public class warp implements CommandExecutor, TabExecutor {
-    private TeleportUtil tpUtil = TeleportUtil.getInstance();
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
@@ -86,7 +83,8 @@ public class warp implements CommandExecutor, TabExecutor {
                    return false;
                }
                Location loc = targetWarp.toLocation();
-               tpUtil.teleport(player, loc, TownySettings.getTeleportWarmupTime());
+               TownyMessaging.sendMsg(player, "&6[Towny] &bWaiting to teleport...");
+               townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
                return true;
 
            } else if (permLvl.name().equals("RESIDENT")) {
@@ -96,7 +94,8 @@ public class warp implements CommandExecutor, TabExecutor {
                    return false;
                }
                Location loc = targetWarp.toLocation();
-               tpUtil.teleport(player, loc, TownySettings.getTeleportWarmupTime());
+               TownyMessaging.sendMsg(player, "&6[Towny] &bWaiting to teleport...");
+               townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
                return true;
            }
 
