@@ -22,18 +22,25 @@ import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Translatable;
+import com.palmergames.bukkit.towny.utils.SpawnUtil;
 import org.breakthebot.TownyWarps.MetaData.MetaDataHelper;
 import org.breakthebot.TownyWarps.Warp;
+import org.breakthebot.TownyWarps.utils.TeleportUtil;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 import java.util.NoSuchElementException;
 
-public class warp implements CommandExecutor {
+
+public class warp implements CommandExecutor, TabExecutor {
+    private TeleportUtil tpUtil = TeleportUtil.getInstance();
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
@@ -79,7 +86,7 @@ public class warp implements CommandExecutor {
                    return false;
                }
                Location loc = targetWarp.toLocation();
-               townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
+               tpUtil.teleport(player, loc, TownySettings.getTeleportWarmupTime());
                return true;
 
            } else if (permLvl.name().equals("RESIDENT")) {
@@ -89,10 +96,10 @@ public class warp implements CommandExecutor {
                    return false;
                }
                Location loc = targetWarp.toLocation();
-               townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
-//               TownyMessaging.sendMsg(player, Translatable.of("msg_town_spawn_warmup", TownySettings.getTeleportWarmupTime()));
+               tpUtil.teleport(player, loc, TownySettings.getTeleportWarmupTime());
                return true;
            }
+
 
        } catch (NoSuchElementException e) {
            TownyMessaging.sendErrorMsg(player, townName + " has no warp named " + warpName);
@@ -109,6 +116,15 @@ public class warp implements CommandExecutor {
         return false;
     }
 
+    @Override
+    public @Nullable List<String> onTabComplete(
+            @NotNull CommandSender sender,
+            @NotNull Command command,
+            @NotNull String label,
+            @NotNull String @NotNull [] args
+    ) {
+        return List.of();
+    }
 }
 
 

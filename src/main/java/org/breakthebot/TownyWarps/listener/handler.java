@@ -22,14 +22,23 @@ import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.event.NewDayEvent;
 import com.palmergames.bukkit.towny.object.Town;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.breakthebot.TownyWarps.MetaData.MetaDataHelper;
+import org.breakthebot.TownyWarps.TownyWarps;
 import org.breakthebot.TownyWarps.Warp;
+import org.breakthebot.TownyWarps.utils.TeleportUtil;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.List;
+import java.util.UUID;
 
 public class handler implements Listener {
+    private TownyWarps plugin = TownyWarps.getInstance();
+    private final TeleportUtil tpUtil = TeleportUtil.getInstance();
 
     @EventHandler
     public void onNewDay(NewDayEvent event){
@@ -49,6 +58,39 @@ public class handler implements Listener {
             }
 
             town.getAccount().withdraw(cost, "Warp cost");
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent ev){
+        if (!(ev.getEntity() instanceof Player player)) return;
+        UUID id = player.getUniqueId();
+        ScheduledTask task = tpUtil.getPendingTeleports().get(id);
+        if (task != null) {
+            tpUtil.cancelTeleport(id);
+
+            TownyMessaging.sendMsg(player, "Teleportation canceled because of damage.");
+
+        }
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+
+        if (
+                event.getFrom().getBlockX() != event.getTo().getBlockX()
+                || event.getFrom().getBlockY() != event.getTo().getBlockY()
+                || event.getFrom().getBlockZ() != event.getTo().getBlockZ()
+        ) {
+
+            UUID uuid = player.getUniqueId();
+            ScheduledTask task =  tpUtil.getPendingTeleports().get(uuid);
+            if (task != null) {
+                tpUtil.cancelTeleport(uuid);
+                TownyMessaging.sendMsg(player, "Teleportation canceled because of movement.");
+
+            }
         }
     }
 }
