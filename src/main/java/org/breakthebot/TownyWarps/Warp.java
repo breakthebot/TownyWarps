@@ -54,12 +54,6 @@ public class Warp {
     public enum AccessLevel { RESIDENT, OUTSIDER }
 
     public String getName() { return name; }
-    public String getWorldName() { return worldName; }
-    public double getX() { return x; }
-    public double getY() { return y; }
-    public double getZ() { return z; }
-    public float getYaw() { return yaw; }
-    public float getPitch() { return pitch; }
     public long getCreatedAt() { return createdAt; }
     public String getCreatedBy() { return createdBy; }
     public AccessLevel getPermLevel() {return this.permLevel;}
