@@ -43,7 +43,7 @@ public class addWarp {
         }
 
         if (args.length != 3) {
-            TownyMessaging.sendErrorMsg(player, "Usage: /t warp add <name> <permLevel>");
+            TownyMessaging.sendErrorMsg(player, "Usage: /t warps add <name> <permLevel>");
             return false;
         }
 
@@ -66,7 +66,7 @@ public class addWarp {
 
             assert resident != null;
             if (!resident.hasTown()) {
-                TownyMessaging.sendErrorMsg(player, "You are not in a town.");
+                TownyMessaging.sendErrorMsg(player, "You must be in a town.");
                 return false;
             }
 
@@ -103,6 +103,7 @@ public class addWarp {
 
                 if (success) {
                     TownyMessaging.sendMsg(player, "Warp added successfully");
+                    town.getAccount().withdraw(next, "New Warp creation");
                 } else {
                     TownyMessaging.sendErrorMsg(player, "Warp not added; An error occurred");
                 }

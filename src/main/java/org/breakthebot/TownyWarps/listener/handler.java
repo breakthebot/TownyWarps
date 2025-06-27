@@ -23,7 +23,6 @@ import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.event.NewDayEvent;
 import com.palmergames.bukkit.towny.event.teleport.CancelledTownyTeleportEvent;
 import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.TeleportRequest;
 import com.palmergames.bukkit.towny.object.Town;
 import org.breakthebot.TownyWarps.MetaData.MetaDataHelper;
 import org.breakthebot.TownyWarps.Warp;
@@ -33,31 +32,53 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class handler implements Listener {
     private final TownyAPI API = TownyAPI.getInstance();
 
     @EventHandler
-    public void onNewDay(NewDayEvent event){
+    public void onNewDay(NewDayEvent event) {
+        long now = System.currentTimeMillis();
+        long oneday = now - 86400000;
+
         for (Town town : API.getTowns()) {
-            List<Warp> warps = MetaDataHelper.getTownWarps(town);
-            int warpCount = warps.size();
+            List<Warp> allWarps = MetaDataHelper.getTownWarps(town);
+
+            List<Warp> recentWarps = new ArrayList<>();
+            List<Warp> chargeableWarps = new ArrayList<>();
+
+            for (Warp warp : allWarps) {
+                if (warp.getCreatedAt() >= oneday) {
+                    recentWarps.add(warp);
+                } else {
+                    chargeableWarps.add(warp);
+                }
+            }
+
+            int chargeableCount = chargeableWarps.size();
             double balance = town.getAccount().getHoldingBalance();
-            int cost = Warp.calculateTotalCost(warpCount);
-            if (balance < cost){
-                while (warpCount > 0 && Warp.calculateTotalCost(warpCount) > balance) {
-                    warps.remove(warpCount - 1);
-                    warpCount--;
+            int cost = Warp.calculateTotalCost(chargeableCount);
+
+            if (balance < cost) {
+                while (chargeableCount > 0 && Warp.calculateTotalCost(chargeableCount) > balance) {
+                    chargeableWarps.remove(chargeableCount - 1);
+                    chargeableCount--;
                     TownyMessaging.sendPrefixedTownMessage(town, "Your town has lost some warps due to insufficient funds.");
                 }
-                MetaDataHelper.getInstance().setTownWarps(town, warps);
-                return;
+
+                List<Warp> updatedWarps = new ArrayList<>();
+                updatedWarps.addAll(chargeableWarps);
+                updatedWarps.addAll(recentWarps);
+                MetaDataHelper.getInstance().setTownWarps(town, updatedWarps);
+                continue;
             }
 
             town.getAccount().withdraw(cost, "Warp cost");
         }
     }
+
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event){

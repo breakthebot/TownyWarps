@@ -35,10 +35,14 @@ public class listWarp {
             TownyMessaging.sendErrorMsg(sender, "Only players may use this command.");
             return false;
         }
+        if (!player.hasPermission("townywarps.warp.use")) {
+            TownyMessaging.sendErrorMsg(player, "You are not permitted to perform this command.");
+            return false;
+        }
         TownyAPI townyApi = TownyAPI.getInstance();
         String townName;
         if (args.length == 2) {
-//            townName = args[1];
+
             townName = String.valueOf(townyApi.getTown(args[1]));
         }
         else townName = townyApi.getTownName(player);

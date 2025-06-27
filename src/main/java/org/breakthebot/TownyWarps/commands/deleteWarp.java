@@ -40,7 +40,7 @@ public class deleteWarp{
         }
 
         if (args.length != 2) {
-            TownyMessaging.sendErrorMsg(player, "Usage: /t warp remove <name>");
+            TownyMessaging.sendErrorMsg(player, "Usage: /t warps remove <name>");
             return false;
         }
 
