@@ -37,7 +37,7 @@ public class Warp {
     private AccessLevel permLevel = AccessLevel.RESIDENT;
     public Warp() {}
 
-    public Warp(String name, Location location, String createdBye) {
+    public Warp(String name, Location location, String createdBy) {
         this.name = name;
         this.worldName = location.getWorld().getName();
         this.x = location.getX();

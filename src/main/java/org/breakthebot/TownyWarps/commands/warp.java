@@ -20,8 +20,10 @@ package org.breakthebot.TownyWarps.commands;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownySettings;
+import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.Town;
 import org.breakthebot.TownyWarps.MetaData.MetaDataHelper;
 import org.breakthebot.TownyWarps.Warp;
 import org.bukkit.Location;
@@ -36,6 +38,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.breakthebot.TownyWarps.MetaData.MetaDataHelper.getTownWarps;
+
 
 public class warp implements CommandExecutor, TabExecutor {
 
@@ -49,16 +53,9 @@ public class warp implements CommandExecutor, TabExecutor {
             return false;
         }
 
-        switch (args[0]) {
-            case "add" -> {
-                return addWarp.onCommand(sender, command, label, args);
-            }
-            case "remove" -> {
-                return deleteWarp.onCommand(sender, command, label, args);
-            }
-            case "list" -> {
-                return listWarp.onCommand(sender,command,label,args);
-            }
+        if (!player.hasPermission("townywarps.warp.use")) {
+            TownyMessaging.sendErrorMsg(player, "You are not permitted to perform this command.");
+            return false;
         }
 
        String townName;
@@ -83,7 +80,7 @@ public class warp implements CommandExecutor, TabExecutor {
                    return false;
                }
                Location loc = targetWarp.toLocation();
-               TownyMessaging.sendMsg(player, "&6[Towny] &bWaiting to teleport...");
+               TownyMessaging.sendMsg(player, "&bWaiting to teleport...");
                townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
                return true;
 
@@ -94,7 +91,7 @@ public class warp implements CommandExecutor, TabExecutor {
                    return false;
                }
                Location loc = targetWarp.toLocation();
-               TownyMessaging.sendMsg(player, "&6[Towny] &bWaiting to teleport...");
+               TownyMessaging.sendMsg(player, "&bWaiting to teleport...");
                townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
                return true;
            }
@@ -122,8 +119,28 @@ public class warp implements CommandExecutor, TabExecutor {
             @NotNull String label,
             @NotNull String @NotNull [] args
     ) {
+        if (args.length == 1) {
+            return TownyUniverse.getInstance().getTowns().stream()
+                    .map(Town::getName)
+                    .filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .sorted()
+                    .toList();
+        }
+
+        if (args.length == 2) {
+            Town town = TownyUniverse.getInstance().getTown(args[0]);
+            if (town != null) {
+                return getTownWarps(town).stream()
+                        .map(Warp::getName)
+                        .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
+                        .sorted()
+                        .toList();
+            }
+        }
+
         return List.of();
     }
+
 }
 
 
