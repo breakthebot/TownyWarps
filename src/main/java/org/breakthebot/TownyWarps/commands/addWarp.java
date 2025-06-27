@@ -20,6 +20,7 @@ import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.TownBlock;
 import org.breakthebot.TownyWarps.MetaData.MetaDataHelper;
 import org.breakthebot.TownyWarps.TownyWarps;
 import org.breakthebot.TownyWarps.Warp;
@@ -55,7 +56,7 @@ public class addWarp {
             return false;
         }
         if (!name.matches("[A-Za-z0-9_]{1,16}")) {
-            TownyMessaging.sendErrorMsg(player, "Invalid name. Names may only contain letters, numbers, and underscores, up to 16 chars.");
+            TownyMessaging.sendErrorMsg(player, "Names may only contain letters, numbers, and underscores, up to 16 chars.");
             return false;
         }
 
@@ -70,7 +71,19 @@ public class addWarp {
                 return false;
             }
 
+
             Town town = resident.getTown();
+            TownBlock townBlock = TownyAPI.getInstance().getTownBlock(player.getLocation());
+
+            if (townBlock == null) {
+                TownyMessaging.sendErrorMsg(player, "You cannot create warps in wilderness.");
+                return false;
+            }
+            if (townBlock.getTown() != town) {
+                TownyMessaging.sendErrorMsg(player, "You cannot create warps outside of your own town.");
+                return false;
+            }
+
 
             if (town.getMayor().equals(resident)) {
 

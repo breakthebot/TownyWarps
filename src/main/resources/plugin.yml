@@ -16,6 +16,21 @@ permissions:
   townywarps.warp.level:
     description: Allows changing warp access level (Mayor only)
     default: op
+  townywarps.warp.rename:
+    description: Allows renaming warp (Mayor only)
+    default: op
+
+  towny.command.townyadmin.warp.create:
+    description: Allows server moderators to create warps for other towns
+    default: op
+  towny.command.townyadmin.warp.delete:
+    description: Allows server moderators to delete warps from other towns
+    default: op
+  towny.command.townyadmin.warp.level:
+    description: Allows server moderators to change warp access level in other towns
+    default: op
+  towny.command.townyadmin.warp.rename:
+    description: ALlows server moderators to rename warps in other towns
 
 dependencies:
   - name: Towny

@@ -1,3 +1,20 @@
+/*
+ * This file is part of TownyWarp.
+ *
+ * TownyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TownyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with TownyWarp. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package org.breakthebot.TownyWarps.commands;
 
 import com.palmergames.bukkit.towny.TownyAPI;
@@ -31,6 +48,10 @@ public class warps implements CommandExecutor, TabExecutor {
             TownyMessaging.sendErrorMsg(sender, "Only players may use this command.");
             return false;
         }
+        if (args.length == 0) {
+            TownyMessaging.sendErrorMsg(player, "Usage: /t warps <action> <arguments>");
+            return false;
+        }
 
         switch (args[0]) {
             case "add" -> {
@@ -43,12 +64,16 @@ public class warps implements CommandExecutor, TabExecutor {
                 return listWarp.onCommand(sender, command, label, args);
             }
             case "level" -> {
-                return editWarp.onCommand(sender, command, label, args);
+                return levelWarp.onCommand(sender, command, label, args);
             }
             case "info" -> {
                 return info.onCommand(sender, command, label, args);
             }
+            case "rename" -> {
+                return renameWarp.onCommand(sender, command, label, args);
+            }
             default -> {
+                TownyMessaging.sendErrorMsg(player, "Unknown field. Choose from: add, remove, list, level, info, rename");
                 return false;
             }
         }
@@ -58,14 +83,14 @@ public class warps implements CommandExecutor, TabExecutor {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command,
                                                 @NotNull String label, @NotNull String @NotNull[] args) {
         if (args.length == 1) {
-            return Stream.of("add", "remove", "list", "level", "info")
+            return Stream.of("add", "remove", "list", "level", "info", "rename")
                     .filter(sub -> sub.startsWith(args[0].toLowerCase()))
                     .toList();
         }
 
         if (args.length == 2) {
             switch (args[0].toLowerCase()) {
-                case "remove", "level" -> {
+                case "remove", "level", "rename" -> {
                     if (sender instanceof Player player) {
                         try {
                             Resident resident = TownyAPI.getInstance().getResident(player);
@@ -90,6 +115,11 @@ public class warps implements CommandExecutor, TabExecutor {
                 case "add" -> {
                     return List.of();
                 }
+                case "set" -> {
+                    return Stream.of("level", "name")
+                            .filter(opt -> opt.startsWith(args[1].toLowerCase()))
+                            .toList();
+                }
             }
         }
 
@@ -110,11 +140,34 @@ public class warps implements CommandExecutor, TabExecutor {
                                 .toList();
                     }
                 }
+                case "set" -> {
+                    if (sender instanceof Player player) {
+                        try {
+                            Resident resident = TownyAPI.getInstance().getResident(player);
+                            if (resident != null && resident.hasTown()) {
+                                Town town = resident.getTown();
+                                if (args[1].equalsIgnoreCase("level") || args[1].equalsIgnoreCase("name")) {
+                                    return getTownWarps(town).stream()
+                                            .map(Warp::getName)
+                                            .filter(name -> name.toLowerCase().startsWith(args[2].toLowerCase()))
+                                            .sorted()
+                                            .toList();
+                                }
+                            }
+                        } catch (NotRegisteredException ignored) {}
+                    }
+                }
+            }
+        }
+
+        if (args.length == 4 && args[0].equalsIgnoreCase("set")) {
+            if (args[1].equalsIgnoreCase("level")) {
+                return Stream.of("resident", "outsider")
+                        .filter(s -> s.startsWith(args[3].toLowerCase()))
+                        .toList();
             }
         }
 
         return List.of();
     }
-
-
 }

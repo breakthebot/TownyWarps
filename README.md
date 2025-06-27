@@ -27,8 +27,8 @@ Town mayors can choose whom to allow to teleport to each warp.
 `townywarps.warp.delete`  
 - Allows deleting warps (Recommended: Mayor only)  
 
-`townywarps.warp.level`  
-- Allows changing warp access level (Recommended: Mayor only)  
+`townywarps.warp.edit`  
+- Allows modifying warp permLevel & name (Recommended: Mayor only)  
 
 ### Config  
 `maxwarps`  

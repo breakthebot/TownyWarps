@@ -49,6 +49,8 @@ public class Warp {
         this.createdAt = System.currentTimeMillis();
     }
 
+    public void setName(String name) {this.name = name;}
+
     public enum AccessLevel { RESIDENT, OUTSIDER }
 
     public String getName() { return name; }

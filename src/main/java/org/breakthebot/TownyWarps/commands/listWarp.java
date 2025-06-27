@@ -50,7 +50,7 @@ public class listWarp {
         List<String> warpNames = MetaDataHelper.getTownWarps(townName).stream().map(Warp::getName).toList();
         String warpList = String.join(", ", warpNames);
 
-        TownyMessaging.sendMsg(player, "&bList of warps for " + townName + ": \n" + warpList);
+        TownyMessaging.sendMsg(player, "&b" + townName + "Warps: \n" + warpList);
         return true;
     }
 

@@ -60,8 +60,11 @@ public class warp implements CommandExecutor, TabExecutor {
 
        String townName;
        String warpName;
-
-       if (args.length == 1){
+        if (args.length < 1 || args.length > 2) {
+            TownyMessaging.sendErrorMsg(player, "Usage: /t warp <town> <name>");
+            return false;
+        }
+        if (args.length == 1) {
            townName = townyApi.getTownName(player);
            warpName = args[0];
        } else {
@@ -69,10 +72,20 @@ public class warp implements CommandExecutor, TabExecutor {
            warpName = args[1];
        }
 
+       Resident res = townyApi.getResident(player);
+       Town town = townyApi.getTown(townName);
+        if (town == null) {
+            TownyMessaging.sendErrorMsg(player, "Town not found.");
+            return false;
+        }
+        if (town.getOutlaws().contains(res)) {
+            TownyMessaging.sendErrorMsg(player, "You are outlawed in that town.");
+            return false;
+        }
+
        try {
-           Warp targetWarp = MetaDataHelper.getWarp(townyApi.getTown(townName), warpName).orElseThrow();
+           Warp targetWarp = MetaDataHelper.getWarp(town, warpName).orElseThrow();
            Warp.AccessLevel permLvl = targetWarp.getPermLevel();
-           Resident res = townyApi.getResident(player.getName());
            if (permLvl.name().equals("OUTSIDER")) {
                assert res != null;
                if (!res.hasTown()) {
@@ -92,6 +105,10 @@ public class warp implements CommandExecutor, TabExecutor {
                }
                Location loc = targetWarp.toLocation();
                TownyMessaging.sendMsg(player, "&bWaiting to teleport...");
+               if (player.hasPermission("towny.admin.spawn.nowarmup")) {
+                   townyApi.requestTeleport(player, loc, 0);
+                   return true;
+               }
                townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
                return true;
            }
@@ -102,13 +119,6 @@ public class warp implements CommandExecutor, TabExecutor {
        } catch (NotRegisteredException e) {
            TownyMessaging.sendErrorMsg(player, townName + " does not exist");
        }
-
-        if (args.length > 3) {
-            TownyMessaging.sendErrorMsg(player, "Usage: /t warp <town> <name>");
-            return false;
-        }
-
-
         return false;
     }
 
