@@ -109,7 +109,13 @@ public class warp implements CommandExecutor, TabExecutor {
                    townyApi.requestTeleport(player, loc, 0);
                    return true;
                }
-               townyApi.requestTeleport(player, loc, TownySettings.getTeleportWarmupTime());
+               int warmup;
+               if (player.hasPermission("towny.admin.spawn.nowarmup")) {
+                   warmup = 0;
+               } else {
+                   warmup = TownySettings.getTeleportWarmupTime();
+               }
+               townyApi.requestTeleport(player, loc, warmup);
                return true;
            }
 

@@ -1,5 +1,5 @@
 name: TownyWarps
-version: '1.0'
+version: '1.0.1'
 main: org.breakthebot.TownyWarps.TownyWarps
 api-version: '1.21'
 authors: [ charisk, Veyronity ]
